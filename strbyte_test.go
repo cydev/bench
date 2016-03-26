@@ -1,12 +1,12 @@
 package bench
 
 import (
+	"bytes"
 	"math/rand"
+	"reflect"
 	"testing"
 	"time"
-	"reflect"
 	"unsafe"
-	"bytes"
 )
 
 func BytesToString(b []byte) string {
@@ -169,7 +169,7 @@ func BenchmarkBSwitch(b *testing.B) {
 		}
 	}
 	if stub == false {
-		b.Fatal	(stub)
+		b.Fatal(stub)
 	}
 }
 
@@ -185,7 +185,22 @@ func BenchmarkTSwitch(b *testing.B) {
 		}
 	}
 	if stub == false {
-		b.Fatal	(stub)
+		b.Fatal(stub)
+	}
+}
+
+func BenchmarkIfSwitch(b *testing.B) {
+	var path = []byte("/foo")
+	var stub bool
+	for i := 0; i < b.N; i++ {
+		if string(path) == "/bar" {
+			stub = false
+		} else {
+			stub = true
+		}
+	}
+	if stub == false {
+		b.Fatal(stub)
 	}
 }
 
@@ -201,10 +216,9 @@ func BenchmarkPSwitch(b *testing.B) {
 		}
 	}
 	if stub == false {
-		b.Fatal	(stub)
+		b.Fatal(stub)
 	}
 }
-
 
 func BenchmarkSSwitch(b *testing.B) {
 	var path = "/foo"
@@ -218,6 +232,6 @@ func BenchmarkSSwitch(b *testing.B) {
 		}
 	}
 	if stub == false {
-		b.Fatal	(stub)
+		b.Fatal(stub)
 	}
 }
