@@ -6,6 +6,7 @@ import (
 	"time"
 	"reflect"
 	"unsafe"
+	"bytes"
 )
 
 func BytesToString(b []byte) string {
@@ -154,4 +155,69 @@ func BenchmarkNameString10(b *testing.B) { nBenchString(b, 10) }
 
 func BenchmarkNameByte10(b *testing.B) {
 	nBenchByte(b, 10)
+}
+
+func BenchmarkBSwitch(b *testing.B) {
+	var path = []byte("/foo")
+	var stub bool
+	for i := 0; i < b.N; i++ {
+		switch string(path) {
+		case "/bar":
+			stub = false
+		case "/foo":
+			stub = true
+		}
+	}
+	if stub == false {
+		b.Fatal	(stub)
+	}
+}
+
+func BenchmarkTSwitch(b *testing.B) {
+	var path = []byte("/foo")
+	var stub bool
+	for i := 0; i < b.N; i++ {
+		switch BytesToString(path) {
+		case "/bar":
+			stub = false
+		case "/foo":
+			stub = true
+		}
+	}
+	if stub == false {
+		b.Fatal	(stub)
+	}
+}
+
+func BenchmarkPSwitch(b *testing.B) {
+	var path = []byte("/foo")
+	var stub bool
+	for i := 0; i < b.N; i++ {
+		switch {
+		case bytes.HasPrefix(path, []byte("/bar")):
+			stub = false
+		case bytes.HasPrefix(path, []byte("/foo")):
+			stub = true
+		}
+	}
+	if stub == false {
+		b.Fatal	(stub)
+	}
+}
+
+
+func BenchmarkSSwitch(b *testing.B) {
+	var path = "/foo"
+	var stub bool
+	for i := 0; i < b.N; i++ {
+		switch path {
+		case "/bar":
+			stub = false
+		case "/foo":
+			stub = true
+		}
+	}
+	if stub == false {
+		b.Fatal	(stub)
+	}
 }
